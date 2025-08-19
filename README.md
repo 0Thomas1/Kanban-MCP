@@ -73,3 +73,10 @@ Kanban-MCP/
 ## License
 
 MIT
+## Tech Stack
+
+- **Node.js**: JavaScript runtime for server-side logic
+- **TypeScript**: Strongly-typed language for safer code
+- **MongoDB**: NoSQL database for task storage
+- **Mongoose**: ODM for MongoDB integration
+- **VS Code MCP**: Integration for Model Context Protocol tools
