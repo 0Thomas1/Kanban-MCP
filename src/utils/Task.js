@@ -20,6 +20,10 @@ const taskSchema = new mongoose.Schema({
       lowercase: true,
     },
   ],
+  startDate: {
+    type: Date,
+    default: null,
+  },
   dueDate: {
     type: Date,
     default: null,
@@ -40,6 +44,9 @@ const taskSchema = new mongoose.Schema({
 //private instance method
 taskSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
+  if (this.taskStatus == "inProgress") {
+    this.startDate = Date.now();
+  }
   next();
 });
 
