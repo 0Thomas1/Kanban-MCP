@@ -88,21 +88,21 @@ export async function moveTask(
   }
 }
 
-// export async function addTaskTag(taskId: string, tag: string) {
-//   try {
-//     const task = await Task.findById(taskId);
-//     if (!task) {
-//       throw new Error("Task not found");
-//     }
+export async function addTaskTag(taskId: string, tag: string) {
+  try {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      throw new Error("Task not found");
+    }
 
-//     if (!task.tags.includes(tag.toLowerCase())) {
-//       task.tags.push(tag.toLowerCase());
-//       await task.save();
-//     }
-//   } catch {
-//     throw new Error("Failed to add tag");
-//   }
-// }
+    if (!task.tags.includes(tag.toLowerCase())) {
+      task.tags.push(tag.toLowerCase());
+      await task.save();
+    }
+  } catch {
+    throw new Error("Failed to add tag");
+  }
+}
 
 // export async function removeTaskTag(taskId: string, tag: string) {
 //   try {

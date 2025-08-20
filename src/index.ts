@@ -165,6 +165,32 @@ server.prompt("tasks-analytics", "get analytics for users tasks", async () => {
     ],
   };
 });
+//add tag
+server.tool("add-tag", "add tags to a tasks",{
+    task_tag: z.string(),
+    task_id: z.string()
+},async (params)=>{
+    try {
+        await mongooseUtils.addTaskTag(params.task_id,params.task_tag);
+        return{
+            content: [
+          {
+            type: "text",
+            text: `Added tag "${params.task_tag}" to tasks"${params.task_id}" successfully.`,
+          },
+        ],
+        }
+    } catch {
+        return{
+            content: [
+          {
+            type: "text",
+            text: `Failed to add tag "${params.task_tag}" to tasks"${params.task_id}".`,
+          },
+        ],
+        }
+    }
+});
 // analytics
 async function getTasksStats() {
   const tasks = await mongooseUtils.getTasks();
