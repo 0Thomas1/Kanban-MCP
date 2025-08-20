@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import User from "./User.js";
 import Task from "./Task.js";
-import fs from "fs";
-import path from "path";
+
 
 // Prefer environment variable over hard-coded credentials. Fallback kept for now.
 const uri = process.env.MONGODB_URI || "your_mongoDB_uri";
@@ -21,11 +20,6 @@ export const initDb: Promise<typeof mongoose> = (async () => {
 
   return mongoose;
 })();
-//caching tasks (CALL EVERYTIME AT THE END OF DB MODIFICATION)
-async function cacheTasks(tasks: any[]) {
-  const cachePath = path.join(__dirname, "./tasksCache.json");
-  fs.writeFileSync(cachePath, JSON.stringify(tasks));
-}
 
 export interface CreateTaskParams {
   task_title: string;
@@ -49,8 +43,6 @@ export async function createTask(params: CreateTaskParams): Promise<void> {
     await newTask.save();
     user.tasks.push(newTask);
     await user.save();
-    const tasks = await Task.find({ user: user._id });
-    cacheTasks(tasks);
   }
 }
 
@@ -63,14 +55,8 @@ export async function getTasks() {
       throw new Error("User not found");
     }
 
-    if (fs.existsSync(path.join(__dirname, "./tasksCache.json"))) {
-      console.error("Using cached tasks");
-      return await import("./tasksCache.json", {
-        with: { type: "json" },
-      }).then((m) => m.default);
-    }
     const tasks = await Task.find({ user: user._id });
-    cacheTasks(tasks);
+
     return tasks;
   } catch {
     throw new Error("Failed to retrieve tasks");
@@ -97,14 +83,6 @@ export async function moveTask(
 
     task.taskStatus = newStatus;
     await task.save();
-
-    //caching
-    const user = await User.findOne({ username });
-    if (!user) {
-      throw new Error("User not found");
-    }
-    const tasks = await Task.find({ user: user._id });
-    cacheTasks(tasks);
   } catch {
     throw new Error("Failed to move task");
   }
@@ -152,14 +130,6 @@ export async function setTaskPriority(
 
     task.priority = priority;
     await task.save();
-
-    //caching
-    const user = await User.findOne({ username });
-    if (!user) {
-      throw new Error("User not found");
-    }
-    const tasks = await Task.find({ user: user._id });
-    cacheTasks(tasks);
   } catch {
     throw new Error("Failed to set priority");
   }
